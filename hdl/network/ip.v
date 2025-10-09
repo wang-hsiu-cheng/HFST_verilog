@@ -4,29 +4,34 @@ module ip
     parameter TCPH_LEN = 20,
     parameter IPH_LEN = 20,
     parameter PROTOCOL = 6,
-    parameter SRCADDR = 32'h7f000001, DESADDR = 32'h7f000001;
+    parameter SRCADDR = 32'h7f000001,
+    parameter DESADDR = 32'h7f000001
 )
 (
     input clk,
     input rst_n,
     input [(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1:0] rx_ip_data,
     input [(PAYLOAD_LEN + TCPH_LEN)*8-1:0] rx_tcp_data,
-    output [(PAYLOAD_LEN + TCPH_LEN)*8-1:0] tx_tcp_data,
-    output [(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1:0] tx_ip_data,
-);
-
-checksum # (
-    .SIZE((PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1);
-) CSUM_0 (
-    .data(tx_ip_reg),
-    .data_checksum(data_checksum)
+    output reg [(PAYLOAD_LEN + TCPH_LEN)*8-1:0] tx_tcp_data,
+    output reg [(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1:0] tx_ip_data
 );
 
 localparam VERSION = 4'd4, HEADER_LEN = 4'd5, TOS = 8'd0, FLAG = 3'd0, OFFSET = 13'd0, TTL = 8'd64;
 reg [2415:0] tx_ip_reg, tx_ip_reg_1;
 reg [2256:0] tx_tcp_reg;
-reg [15:0] length, ldent;
+reg [15:0] length, ldent, next_ldent;
 wire [15:0] data_checksum;
+
+checksum # (
+    .SIZE((PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8)
+) CSUM_0 (
+    // input
+    .clk(clk),
+    .rst_n(rst_n),
+    .data(tx_ip_reg),
+    // output
+    .data_checksum(data_checksum)
+);
 
 always@(*) begin
     // encoder

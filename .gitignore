@@ -1,0 +1,8 @@
+*.log
+*.conf
+*.rc
+*simv
+*/csrc
+*/simv.daidir
+*/spyglass-1
+*/verdiLog
