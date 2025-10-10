@@ -17,7 +17,8 @@ module fix_top
 );
 
 fix_decoder #(
-
+    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
+    .FIX_HEADER_LEN(FIX_HEADER_LEN)
 ) FIX_DECODER_0 (
     // input
     .clk(clk),
