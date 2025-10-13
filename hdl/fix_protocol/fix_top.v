@@ -12,9 +12,18 @@ module fix_top
     input rx_enable, // tx_enable in network_top
     input [(FIX_HEADER_LEN+FIX_PAYLOAD_LEN)*8-1:0] rx_fix_data, // tx_fix_data in network_top
     // output
-    output tx_encoded, // rx_enable in network_top
+    output reg tx_encoded, // rx_enable in network_top
     output [(FIX_HEADER_LEN+FIX_PAYLOAD_LEN)*8-1:0] encoded_msg // rx_fix_data in network_top
 );
+
+localparam IDLE = 2'd0, LOGGING_ON = 2'd1, ORDERING = 2'd2, LOGGING_OUT = 2'd3; // state of FSM
+localparam LOGON = 4'd0, HEART_BT = 4'd1, TEST_RQT = 4'd2, RESEND_RQT = 4'd3, RJT = 4'd4, SEQ_RST = 4'd5, LOGOUT = 4'd6, REPORT = 4'd7, ORDER_RJT = 4'd8; // x message type
+wire [FIX_PAYLOAD_LEN*8-1:0] error_payload, msg_order_payload, msg_a_payload, msg_0_payload, msg_5_payload, return_2_payload, return_3_payload, fix_msg;
+wire [7:0] rx_msg_type;
+reg [1:0] state, next_state; // state of FSM
+reg order_generate_enable, encode_a_enable, encode_0_enable, encode_2_enable, encode_3_enable, encode_5_enable;
+reg [FIX_PAYLOAD_LEN*8-1:0] last_payload, payload, temp_payload;
+reg [32:0] next_heartbeat_counter, heartbeat_counter;
 
 fix_decoder #(
     .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
@@ -42,8 +51,8 @@ order_generator #(
     .clk(clk),
     .rst_n(rst_n),
     .enable(order_generate_enable),
-    .(user_command),
-    .(fix_msg),
+    .user_command(user_command),
+    .fix_msg(fix_msg),
     // output
     .fix_payload(msg_order_payload)
 );
@@ -123,18 +132,9 @@ header_encoder #(
     .rst_n(rst_n),
     .fix_payload(payload),
     // output
-    .encoded_msg(encoded_msg_reg),
+    .encoded_msg(encoded_msg),
     .encoded(tx_encoded_reg)
 );
-
-wire fatal_error, is_decoded, rx_msg_type; // output from fix_decoder module
-wire [FIX_PAYLOAD_LEN*8-1:0] fix_msg; // output from fix_decoder module
-wire [FIX_PAYLOAD_LEN*8-1:0] error_payload, msg_order_payload, msg_a_payload, msg_0_payload, msg_5_payload, return_2_payload, return_3_payload;
-reg state, next_state; // state of FSM
-reg [FIX_PAYLOAD_LEN*8-1:0] last_payload, payload, temp_payload;
-reg [32:0] next_heartbeat_counter, heartbeat_counter;
-localparam IDLE, LOGGING_ON, ORDERING, LOGGING_OUT; // state of FSM
-localparam LOGON, HEART_BT, TEST_RQT, RESEND_RQT, RJT, SEQ_RST, LOGOUT, REPORT, ORDER_RJT; // rx message type
 
 always@(*) begin
     temp_payload = msg_order_payload | msg_a_payload | error_payload | msg_5_payload | return_2_payload | return_3_payload;
@@ -160,7 +160,7 @@ always@(*) begin
     end
 end
 always@(*) begin
-    case (state) begin
+    case (state)
         IDLE : begin
             if (user_command == "START") begin
                 order_generate_enable = 0;
@@ -216,7 +216,7 @@ always@(*) begin
                 // tackle the error message and return correct message
                 next_state = ORDERING;
             end
-            if (is_decoded && (rx_msg_type == "3")) begin
+            else if (is_decoded && (rx_msg_type == "3")) begin
                 order_generate_enable = 0;
                 encode_a_enable = 0;
                 encode_2_enable = 0;
@@ -272,7 +272,6 @@ always@(posedge clk) begin
         heartbeat_counter <= 0;
         // module output
         tx_encoded <= 0;
-        encoded_msg_reg <= 0;
     end
     else begin
         state <= next_state;
@@ -280,7 +279,6 @@ always@(posedge clk) begin
         heartbeat_counter <= next_heartbeat_counter;
         // module output
         tx_encoded <= tx_encoded_reg;
-        encoded_msg <= encoded_msg_reg;
     end
 end
 endmodule

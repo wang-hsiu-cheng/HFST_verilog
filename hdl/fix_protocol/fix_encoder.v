@@ -1,7 +1,7 @@
 module order_generator
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // include msg type D, F, G, H, 1
@@ -9,10 +9,10 @@ module order_generator
     input clk,
     input rst_n,
     input enable,
-    .(user_command),
-    .(fix_msg),
+    input [5*8-1:0] user_command,
+    input [FIX_PAYLOAD_LEN*8-1:0] fix_msg,
     // output
-    .fix_payload(msg_order_payload)
+    output reg [FIX_PAYLOAD_LEN*8-1:0] fix_payload
 );
 always@(*) begin
 
@@ -30,8 +30,8 @@ endmodule
 
 module msg_a_encoder
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // input
@@ -39,7 +39,7 @@ module msg_a_encoder
     input rst_n,
     input enable,
     // output
-    .fix_payload(msg_a_payload)
+    output reg [FIX_PAYLOAD_LEN*8-1:0] fix_payload
 );
 always@(*) begin
 
@@ -57,8 +57,8 @@ endmodule
 
 module msg_0_encoder
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // input
@@ -66,7 +66,7 @@ module msg_0_encoder
     input rst_n,
     input enable,
     // output
-    .fix_payload(msg_0_payload)
+    output reg [FIX_PAYLOAD_LEN*8-1:0] fix_payload
 );
 always@(*) begin
 
@@ -84,8 +84,8 @@ endmodule
 
 module return_2_encoder
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // read last_payload and resend 
@@ -93,9 +93,9 @@ module return_2_encoder
     input clk,
     input rst_n,
     input enable,
-    .last_payload(last_payload),
+    input [FIX_PAYLOAD_LEN*8-1:0] last_payload,
     // output
-    .fix_payload(return_2_payload)
+    output reg [FIX_PAYLOAD_LEN*8-1:0] fix_payload
 );
 always@(*) begin
 
@@ -113,8 +113,8 @@ endmodule
 
 module return_3_encoder
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // read last_payload and modify the error
@@ -122,9 +122,9 @@ module return_3_encoder
     input clk,
     input rst_n,
     input enable,
-    .last_payload(last_payload),
+    input [FIX_PAYLOAD_LEN*8-1:0] last_payload,
     // output
-    .fix_payload(return_3_payload)
+    output reg [FIX_PAYLOAD_LEN*8-1:0] fix_payload
 );
 always@(*) begin
 
@@ -142,8 +142,8 @@ endmodule
 
 module msg_5_encoder
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // input
@@ -151,7 +151,7 @@ module msg_5_encoder
     input rst_n,
     input enable,
     // output
-    .fix_payload(msg_5_payload)
+    output reg [FIX_PAYLOAD_LEN*8-1:0] fix_payload
 );
 always@(*) begin
 
@@ -169,8 +169,8 @@ endmodule
 
 module header_encoder
 #(
-    .FIX_PAYLOAD_LEN(FIX_PAYLOAD_LEN),
-    .FIX_HEADER_LEN(FIX_HEADER_LEN)
+    parameter FIX_PAYLOAD_LEN = 220,
+    parameter FIX_HEADER_LEN = 42
 )
 (
     // the msg type is appended at the end of the payload. need to be removed after encode.
@@ -178,10 +178,10 @@ module header_encoder
     // input
     input clk,
     input rst_n,
-    .fix_payload(payload),
+    input [FIX_PAYLOAD_LEN*8-1:0] fix_payload,
     // output
-    .encoded_msg(encoded_msg_reg),
-    .encoded(tx_encoded_reg)
+    output reg [(FIX_PAYLOAD_LEN+FIX_HEADER_LEN)*8-1:0] encoded_msg,
+    output reg encoded
 );
 
 always@(*) begin
