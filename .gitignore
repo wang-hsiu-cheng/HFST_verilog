@@ -2,6 +2,8 @@
 *.conf
 *.rc
 *simv
+*.tcl
+*.setup
 */csrc
 */simv.daidir
 */spyglass-1

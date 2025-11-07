@@ -1,37 +1,22 @@
 module checksum
 # (
-    parameter SIZE = 16
+  parameter SIZE = 64
 )
 (
-    input clk,
-    input rst_n,
-    input [SIZE-1:0] data,
-    output reg [15:0] data_checksum
+  input [SIZE-1:0] data,
+  output reg [15:0] data_checksum
 );
-
-reg [15:0] checksum_reg, checksum_reg_1, checksum_reg_2;
-reg [15:0] segment;
-reg [15:0] sum;
+localparam PACK = SIZE>>4;
+//reg [15:0] sum[0:PACK];
 integer i;
 
 always@(*) begin
-    sum = 0;
-    for (i = 0; i < SIZE; i = i + 16) begin
-        segment = (data >> i) & 16'hffff;
-        sum = sum + segment;
-    end
-    checksum_reg = sum;
-    checksum_reg_1 = (checksum_reg >> 16) + (checksum_reg & 16'hffff);
-    checksum_reg_2 = ~checksum_reg_1 & 16'hffff;
-end
-
-always@(posedge clk) begin
-    if (~rst_n) begin
-        data_checksum <= 0;
-    end
-    else begin
-        data_checksum <= checksum_reg_2;
-    end
+  /*sum[0] = data & 16'hffff;
+  for (i = 0; i < SIZE-16; i = i + 16) begin
+    sum[i>>4+1] = sum[i>>4] + ((data >> (i+16)) & 16'hffff);
+  end
+  data_checksum = ~((sum[PACK-1] >> 16) + (sum[PACK-1] & 16'hffff)) & 16'hffff;*/
+  data_checksum = 0;
 end
 
 endmodule
