@@ -1,0 +1,73 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : network_top
+Version: R-2020.09-SP5
+Date   : Sat Nov 22 20:56:25 2025
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: PVT_1P08V_125C   Library: slow_vdd1v2
+Wire Load Model Mode: enclosed
+
+  Startpoint: fix_client_valid
+              (input port clocked by clk)
+  Endpoint: TCP_ENCODER_0/clk_gate_last_ack_reg/latch
+            (negative level-sensitive latch clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  network_top        Large                 slow_vdd1v2
+  tcp_encoder_100_12_20_20_06_7f000001_7f000001
+                     Small                 slow_vdd1v2
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                 0.0000     0.0000
+  clock network delay (ideal)                           0.0000     0.0000
+  input external delay                                  0.6000     0.6000 f
+  fix_client_valid (in)                                 0.0036     0.6036 f
+  U273/Y (AND2XL)                                       0.0854     0.6890 f
+  U96/Y (NOR2XL)                                        0.0788     0.7678 r
+  U100/Y (NAND2XL)                                      0.1291     0.8969 f
+  TCP_ENCODER_0/rx_enable (tcp_encoder_100_12_20_20_06_7f000001_7f000001)
+                                                        0.0000     0.8969 f
+  TCP_ENCODER_0/U50/Y (INVXL)                           0.1441     1.0410 r
+  TCP_ENCODER_0/U139/Y (BUFX2)                          0.1134     1.1544 r
+  TCP_ENCODER_0/U140/Y (BUFX2)                          0.0699     1.2244 r
+  TCP_ENCODER_0/U86/Y (NAND2XL)                         0.0789     1.3033 f
+  TCP_ENCODER_0/clk_gate_last_ack_reg/EN (SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_3)
+                                                        0.0000     1.3033 f
+  TCP_ENCODER_0/clk_gate_last_ack_reg/latch/D (TLATNXL)
+                                                        0.0068     1.3101 f
+  data arrival time                                                1.3101
+
+  clock clk (fall edge)                                 3.0000     3.0000
+  clock network delay (ideal)                           0.0000     3.0000
+  TCP_ENCODER_0/clk_gate_last_ack_reg/latch/GN (TLATNXL)
+                                                        0.0000     3.0000 f
+  time borrowed from endpoint                           0.0000     3.0000
+  data required time                                               3.0000
+  --------------------------------------------------------------------------
+  data required time                                               3.0000
+  data arrival time                                               -1.3101
+  --------------------------------------------------------------------------
+  slack (MET)                                                      1.6899
+
+  Time Borrowing Information
+  --------------------------------------------------------------
+  clk nominal pulse width                               3.0000   
+  library setup time                                   -0.0605   
+  --------------------------------------------------------------
+  max time borrow                                       2.9395   
+  actual time borrow                                    0.0000   
+  --------------------------------------------------------------
+
+
+1

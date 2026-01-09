@@ -1,0 +1,10 @@
+*.log
+*.conf
+*.rc
+*simv
+*.json
+*.xlsx
+*/csrc
+*/simv.daidir
+*/spyglass-1
+*/verdiLog
