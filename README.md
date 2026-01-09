@@ -1,6 +1,7 @@
 # High Frequency Stock Trading
 
 ## Structure
+```
 .
 |-- hdl
 |   |-- checksum.v
@@ -37,23 +38,23 @@
 |   `-- synthesis.tcl
 |-- README.md
 |-- .gitignore
-
+```
 ## Features
 1. FIX protocol trading
-  - **NOT READY**
+   - **NOT READY**
 
 2. IP and TCP network
-  1. Simulation
-    1. Execute 2 `network_test.cpp` programs. THey can communicate with each other. 
-    2. Record the communication ass the golden answer for this network RTL module.
-  2. Synthesis
-    1. In /syn folder. We synthesis the RTL with *Cadence GSC library (GPDK45)* library
-    2. Use `.tcl` file to setup the index
-    3. Before deployment, we use **Vivado** to synthesis this module and generate the bitstream. 
-  3. Deployment(PYNQ Z1)
-    1. Create Block Design in Vivado
-    2. Use AXI GPIO
-    3. Can use Python to Read/Write the signal from/to FPGA
+   1. Simulation
+      1. Execute 2 `network_test.cpp` programs. THey can communicate with each other. 
+      2. Record the communication ass the golden answer for this network RTL module.
+   2. Synthesis
+      1. In /syn folder. We synthesis the RTL with *Cadence GSC library (GPDK45)* library
+      2. Use `.tcl` file to setup the index
+      3. Before deployment, we use **Vivado** to synthesis this module and generate the bitstream. 
+   3. Deployment(PYNQ Z1)
+      1. Create Block Design in Vivado
+      2. Use AXI GPIO
+      3. Can use Python to Read/Write the signal from/to FPGA
 
 ## Simulation Steps
 1. Run `./run_sim.sh`
