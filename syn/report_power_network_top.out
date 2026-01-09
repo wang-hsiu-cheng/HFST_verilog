@@ -1,0 +1,74 @@
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : network_top
+Version: R-2020.09-SP5
+Date   : Sat Nov 22 20:56:27 2025
+****************************************
+
+
+Library(s) Used:
+
+    slow_vdd1v2 (File: /usr/cadtool/GPDK45/gsclib045_svt_v4.4/gsclib045/db/slow_vdd1v2_basicCells_wl.db)
+
+
+Operating Conditions: PVT_1P08V_125C   Library: slow_vdd1v2
+Wire Load Model Mode: enclosed
+
+Design        Wire Load Model            Library
+------------------------------------------------
+network_top            Large             slow_vdd1v2
+ip_encoder_100_20_20_06_7f000001_7f000001
+                       Small             slow_vdd1v2
+ip_decoder_100_20_20_06_7f000001_7f000001
+                       Small             slow_vdd1v2
+tcp_encoder_100_12_20_20_06_7f000001_7f000001
+                       Small             slow_vdd1v2
+tcp_decoder_100_12_20_20_06_7f000001_7f000001
+                       Small             slow_vdd1v2
+random                 Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_0
+                       Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_6
+                       Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_1
+                       Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_2
+                       Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_3
+                       Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_4
+                       Small             slow_vdd1v2
+SNPS_CLOCK_GATE_HIGH_tcp_encoder_100_12_20_20_06_7f000001_7f000001_mydesign_5
+                       Small             slow_vdd1v2
+
+
+Global Operating Voltage = 1.08 
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1pW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+network_top                            2.09e-02    1.552 9.27e+05    1.574 100.0
+  TCP_DECODER_0 (tcp_decoder_100_12_20_20_06_7f000001_7f000001)
+                                       1.95e-03    0.301 1.76e+05    0.303  19.3
+  TCP_ENCODER_0 (tcp_encoder_100_12_20_20_06_7f000001_7f000001)
+                                       1.27e-02    0.494 3.44e+05    0.507  32.2
+    RANDOM_0 (random)                  1.45e-04 7.34e-03 3.17e+03 7.49e-03   0.5
+  IP_DECODER_0 (ip_decoder_100_20_20_06_7f000001_7f000001)
+                                       3.08e-03    0.383 2.23e+05    0.387  24.6
+  IP_ENCODER_0 (ip_encoder_100_20_20_06_7f000001_7f000001)
+                                       2.96e-03    0.360 1.72e+05    0.363  23.1
+1

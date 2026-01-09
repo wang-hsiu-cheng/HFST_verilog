@@ -2,8 +2,8 @@
 *.conf
 *.rc
 *simv
-*.tcl
-*.setup
+*.json
+*.xlsx
 */csrc
 */simv.daidir
 */spyglass-1

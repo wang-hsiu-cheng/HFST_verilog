@@ -4,8 +4,8 @@ module ip_decoder
   parameter TCPH_LEN = 20,
   parameter IPH_LEN = 20,
   parameter PROTOCOL = 6,
-  parameter SRCADDR = 32'h7f000001,
-  parameter DESADDR = 32'h7f000001
+  parameter SRCADDR = 32'hc0a84104,
+  parameter DESADDR = 32'hc0a84103
 )
 (
   input clk,
@@ -21,6 +21,7 @@ reg [(PAYLOAD_LEN + TCPH_LEN)*8-1:0] tx_tcp_reg;
 reg [16-1:0] length;
 reg [16-1:0] ident, last_ident;
 reg [(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1:0] checksum_in;
+reg ip_decode_valid_reg;
 wire [16-1:0] data_checksum;
 
 checksum # (
@@ -36,29 +37,34 @@ always@(*) begin
   checksum_in = {rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-:80], 16'd0, rx_ip_data[(PAYLOAD_LEN + TCPH_LEN)*8-1+64:0]} >> ((PAYLOAD_LEN + TCPH_LEN + IPH_LEN - length)*8);
   length = rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-16-:16];
   ident = rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-32-:16];
-  if (rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-:4] == VERSION && 
-      rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-4-:4] == HEADER_LEN && 
-      rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-8-:8] == TOS && 
-      ident > last_ident &&
-      rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-72-:8] == PROTOCOL && 
-      rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-96-:32] == SRCADDR &&
-      rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-128-:32] == DESADDR &&
-      rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-80-:16] == data_checksum) begin
+  if (
+    rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-:4] == VERSION //&& 
+      //rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-4-:4] == HEADER_LEN && 
+      //rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-8-:8] == TOS && 
+      //ident > last_ident &&
+      //rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-72-:8] == PROTOCOL && 
+      //rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-96-:32] == SRCADDR &&
+      //rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-128-:32] == DESADDR 
+      //&&
+      //rx_ip_data[(PAYLOAD_LEN + TCPH_LEN + IPH_LEN)*8-1-80-:16] == data_checksum
+      ) begin
     tx_tcp_reg = rx_ip_data[(PAYLOAD_LEN + TCPH_LEN)*8-1:0];
-    ip_decode_valid = 1;
+    ip_decode_valid_reg = 1;
   end else begin
     tx_tcp_reg = 0;
-    ip_decode_valid = 0;
+    ip_decode_valid_reg = 0;
   end
 end
 
 always@(posedge clk) begin
   if (~rst_n) begin
     last_ident <= 0;
+    ip_decode_valid <= 0;
     tx_tcp_data <= 0;
   end
   else begin
     last_ident <= ident;
+    ip_decode_valid <= ip_decode_valid_reg;
     tx_tcp_data <= tx_tcp_reg;
   end
 end

@@ -44,7 +44,10 @@ always@(*) begin
   pseudo_pi_header[PSEUDO_HEADER_LEN*8-1-72-:8] = PROTOCOL;
   pseudo_pi_header[PSEUDO_HEADER_LEN*8-1-80:0] = TCPH_LEN + PAYLOAD_LEN;
   checksum_in = {pseudo_pi_header, rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-:128], 16'd0, rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-144-:16]};
-  if ((rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-106-:6] & PUSH) == PUSH && rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-128-:16] == data_checksum && ip_decode_valid) begin
+  //&& rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-128-:16] == data_checksum
+  if (((rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-106-:6] & PUSH) || 
+       (rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-106-:6] & ACK)  ||
+       (rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-106-:6] & SYN)) && ip_decode_valid) begin
     tx_enable_reg = 1;
     tx_fix_reg = rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-160:0];
     rcv_src_port = rx_tcp_data[(PAYLOAD_LEN + TCPH_LEN)*8-1-16-:16];

@@ -1,20 +1,18 @@
-module tcp_encoder
-#(
-    parameter PAYLOAD_LEN = 262,
-    parameter PSEUDO_HEADER_LEN = 12,
-    parameter TCPH_LEN = 20,
-    parameter IPH_LEN = 20,
-    parameter PROTOCOL = 6,
-    parameter SRCADDR = 32'h7f000001,
-    parameter DESADDR = 32'h7f000001
-)
-(
-    input clk,
-    input rst_n,
-    input [5:0] flag,
-    input rx_enable,
-    input [PAYLOAD_LEN*8-1:0] rx_fix_data,
-    output reg [(PAYLOAD_LEN + TCPH_LEN)*8-1:0] tx_tcp_data
+module tcp_encoder #(
+  parameter PAYLOAD_LEN = 262,
+  parameter PSEUDO_HEADER_LEN = 12,
+  parameter TCPH_LEN = 20,
+  parameter IPH_LEN = 20,
+  parameter PROTOCOL = 6,
+  parameter SRCADDR = 32'h7f000001,
+  parameter DESADDR = 32'h7f000001
+) (
+  input clk,
+  input rst_n,
+  input [5:0] flag,
+  input rx_enable,
+  input [PAYLOAD_LEN*8-1:0] rx_fix_data,
+  output reg [(PAYLOAD_LEN + TCPH_LEN)*8-1:0] tx_tcp_data
 );
 
 localparam FIN = 6'b000001, SYN = 6'b000010, RST = 6'b000100, PUSH = 6'b001000, ACK = 6'b010000, URG = 6'b100000;
@@ -30,18 +28,18 @@ wire [15:0] rand_val, data_checksum;
 reg [15:0] rcv_dst_port, rcv_src_port;
 
 checksum # (
-    .SIZE((PAYLOAD_LEN + TCPH_LEN + PSEUDO_HEADER_LEN)*8)
+  .SIZE((PAYLOAD_LEN + TCPH_LEN + PSEUDO_HEADER_LEN)*8)
 ) CSUM_0 (
-    // input
-    .data(checksum_in),
-    // output
-    .data_checksum(data_checksum)
+  // input
+  .data(checksum_in),
+  // output
+  .data_checksum(data_checksum)
 );
 
 random RANDOM_0 (
-    .clk(clk),
-    .rst_n(rst_n),
-    .rnd(rand_val)
+  .clk(clk),
+  .rst_n(rst_n),
+  .rnd(rand_val)
 );
 
 always@(*) begin
